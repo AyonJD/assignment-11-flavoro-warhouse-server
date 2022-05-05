@@ -1,5 +1,5 @@
 const express = require('express');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 const port = process.env.PORT || 5000;
 const cors = require('cors');
@@ -253,27 +253,67 @@ async function run() {
         await client.connect();
         const collection = client.db("assignment").collection("product");
         //Get API----------------->
-        app.get('/product', async (req, res) => {
+        app.get('/inventory', async (req, res) => {
             const query = {};
             const cursor = collection.find(query);
             const products = await cursor.toArray();
             res.send(products)
         })
+        //Find one method
+        app.get('/inventory/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const products = await collection.findOne(query)
+            res.send(products)
+        })
         //Post API---------------->
-        app.post('/product', async (req, res) => {
+        app.post('/inventory', async (req, res) => {
             const newProduct = req.body;
             // console.log('Adding new user', newProduct);
             const result = await collection.insertOne(newProduct)
             res.send(result)
         })
         //Delet API---------------->
-        app.delete('/product/:id', async (req, res) => {
+        app.delete('/inventory/:id', async (req, res) => {
             const quantity = req.params.id;
             const query = { _quantity: Objectquantity(quantity) };
             const result = await collection.deleteOne(query);
             res.send(result)
         })
-        
+
+        //Update
+        app.put('/inventory/:id', async (req, res) => {
+            const id = req.params.id
+            const updateProduct = req.body
+            const query = { _id: ObjectId(id) }
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    quantity: updateProduct.newQuantity
+                }
+            }
+
+            const result = await collection.updateOne(query, updateDoc, options)
+            res.send(result)
+        })
+        //Delete
+        app.put('/deliver/:id', async (req, res) => {
+            const id = req.params.id
+            const newQuantity = req.body
+            console.log(newQuantity);
+            const deliver = newQuantity.quantity - 1
+            const query = { _id: ObjectId(id) }
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    quantity: deliver
+                }
+            }
+
+            const result = await collection.updateOne(query, updateDoc, options)
+            res.send(result);
+        })
+
     }
     finally {
         // await client.close()
