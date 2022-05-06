@@ -30,7 +30,7 @@ async function run() {
         })
 
         //Add item
-        app.post('/addItem', async (req, res) => {
+        app.post('/add-item', async (req, res) => {
 
             const newItem = req.body;
 
@@ -38,45 +38,45 @@ async function run() {
             res.send(result)
         })
 
-            //Find one method
-            app.get('/inventory/:id', async (req, res) => {
+        //Find one method
+        app.get('/inventory/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const products = await collection.findOne(query)
             res.send(products)
         })
-            //Post API---------------->
-            app.post('/inventory', async (req, res) => {
+        //Post API---------------->
+        app.post('/inventory', async (req, res) => {
             const newProduct = req.body;
             // console.log('Adding new user', newProduct);
             const result = await collection.insertOne(newProduct)
             res.send(result)
         })
-            //Delet API---------------->
-            app.delete('/inventory/:id', async (req, res) => {
+        //Delet API---------------->
+        app.delete('/inventory/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const result = await collection.deleteOne(query);
             res.send(result)
         })
 
-            //Update
-            app.put('/inventory/:id', async (req, res) => {
+        //Update
+        app.put('/inventory/:id', async (req, res) => {
             const id = req.params.id
             const updateProduct = req.body
             const query = { _id: ObjectId(id) }
             const options = { upsert: true };
             const updateDoc = {
                 $set: {
-                    quantity: updateProduct.newQuantity
+                    stock: updateProduct.newQuantity
                 }
             }
 
             const result = await collection.updateOne(query, updateDoc, options)
             res.send(result)
         })
-            //Delete
-            app.put('/deliver/:id', async (req, res) => {
+        //Delete
+        app.put('/deliver/:id', async (req, res) => {
             const id = req.params.id
             const newQuantity = req.body
             console.log(newQuantity);
@@ -85,7 +85,7 @@ async function run() {
             const options = { upsert: true };
             const updateDoc = {
                 $set: {
-                    quantity: deliver
+                    stock: deliver
                 }
             }
 
@@ -93,7 +93,7 @@ async function run() {
             res.send(result);
         })
 
-        }
+    }
     finally {
         // await client.close()
     }
