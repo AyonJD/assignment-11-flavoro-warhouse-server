@@ -130,7 +130,6 @@ async function run() {
             });
 
             res.send({ getToken });
-
         })
 
         // get items by email 
