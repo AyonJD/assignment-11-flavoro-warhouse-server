@@ -4,42 +4,47 @@ const app = express();
 const port = process.env.PORT || 5000;
 const cors = require('cors');
 const ObjectId = require('mongodb').ObjectId;
+const jwt = require('jsonwebtoken');
+require("dotenv").config();
+
 
 app.use(cors());
 app.use(express.json())
 
-
+// console.log(process.env.TOKEN);
 
 app.get('/', (req, res) => {
     res.send('Running my Curd server')
 })
 // console.log(process.env.DATABASE_USER, process.env.DATABASE_PASS);
 
-const uri = `mongodb+srv://assignment:zTT4VLCVfmAEAWVO@cluster0.1mu84.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DATABASE_USER}:${process.env.DATABASE_PASS}@cluster0.1mu84.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
-async function run() {
 
-    function CheckJWTToken(req, res, next) {
-        const hederAuth = req.headers.authorization
-        if (!hederAuth) {
-            return res.status(401).send({ message: 'unauthorized access.try again' })
-        }
-        else {
-            const token = hederAuth.split(' ')[1]
-            console.log({ token });
-            jwt.verify(token, process.env.TOKEN, (err, decoded) => {
-                if (err) {
-                    console.log(err);
-                    return res.status(403).send({ message: 'forbidden access' })
-                }
-                console.log('decoded', decoded);
-                req.decoded = decoded;
-                next()
-            })
-        }
-        console.log(hederAuth, 'inside chckjwt');
-
+function CheckJWTToken(req, res, next) {
+    const hederAuth = req.headers.authorization
+    if (!hederAuth) {
+        return res.status(401).send({ message: 'unauthorized access.try again' })
     }
+    else {
+        const token = hederAuth.split(' ')[1]
+        console.log({ token });
+        jwt.verify(token, `${process.env.TOkEN}`, (err, decoded) => {
+
+            if (err) {
+                console.log(err);
+                return res.status(403).send({ message: 'forbidden access' })
+            }
+            console.log('decoded', decoded);
+            req.decoded = decoded;
+            next()
+        })
+    }
+    console.log(hederAuth, 'inside chckjwt');
+
+}
+
+async function run() {
     try {
         await client.connect();
         const collection = client.db("assignment").collection("product");
@@ -120,7 +125,7 @@ async function run() {
             const user = req.body;
             console.log(req.body, 'user')
 
-            const getToken = jwt.sign(user, process.env.TOKEN, {
+            const getToken = jwt.sign(user, `${process.env.TOKEN}`, {
                 expiresIn: '1d'
             });
 
@@ -157,3 +162,4 @@ run().catch(console.dir)
 app.listen(port, () => {
     console.log('Listening optional callback')
 })
+
