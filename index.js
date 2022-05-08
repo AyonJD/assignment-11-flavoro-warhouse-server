@@ -134,7 +134,9 @@ async function run() {
         // get items by email 
         app.get('/singleItem', CheckJWTToken, async (req, res) => {
             const decodedEmail = req.decoded.email
-            const email = req.query.email
+            console.log('decodedEmail', decodedEmail);
+            const email = req.query.email;
+            console.log("email", email);
             if (email === decodedEmail) {
                 const query = { email: email }
                 const cursor = collection.find(query)
@@ -142,6 +144,7 @@ async function run() {
                 res.send(items)
             }
             else {
+                // console.log(param);
                 return res.status(403).send({ message: 'forbidden access' })
 
             }
