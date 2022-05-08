@@ -29,7 +29,7 @@ function CheckJWTToken(req, res, next) {
     else {
         const token = hederAuth.split(' ')[1]
         console.log({ token });
-        jwt.verify(token, '4e8e3e5c9b4d297c407a0ca2b3abc88d5a30bf3142cac344c01bb4f567b60756a658dd932fba00cb9018ffd36a8a571f4022f98dfee30632ad731a827c3cad8b', (err, decoded) => {
+        jwt.verify(token, process.env.TOKEN, (err, decoded) => {
 
             if (err) {
                 console.log(err);
@@ -125,7 +125,7 @@ async function run() {
             const user = req.body;
             console.log(req.body, 'user')
 
-            const getToken = jwt.sign(user, '4e8e3e5c9b4d297c407a0ca2b3abc88d5a30bf3142cac344c01bb4f567b60756a658dd932fba00cb9018ffd36a8a571f4022f98dfee30632ad731a827c3cad8b', {
+            const getToken = jwt.sign(user, process.env.TOKEN, {
                 expiresIn: '1d'
             });
 
