@@ -29,7 +29,7 @@ function CheckJWTToken(req, res, next) {
     else {
         const token = hederAuth.split(' ')[1]
         console.log({ token });
-        jwt.verify(token, `${process.env.TOkEN}`, (err, decoded) => {
+        jwt.verify(token, process.env.TOkEN, (err, decoded) => {
 
             if (err) {
                 console.log(err);
