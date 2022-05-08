@@ -121,7 +121,7 @@ async function run() {
         })
 
         //JWT
-        app.post('/register', async (req, res) => {
+        app.post('/signin', async (req, res) => {
             const user = req.body;
             console.log(req.body, 'user')
 
@@ -131,7 +131,6 @@ async function run() {
 
             res.send({ getToken });
         })
-// saadasd
         // get items by email 
         app.get('/singleItem', CheckJWTToken, async (req, res) => {
             const decodedEmail = req.decoded.email
@@ -144,7 +143,7 @@ async function run() {
             }
             else {
                 return res.status(403).send({ message: 'forbidden access' })
-                
+
             }
         })
 
