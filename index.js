@@ -121,7 +121,7 @@ async function run() {
         })
 
         //JWT
-        app.post('/signin', async (req, res) => {
+        app.post('/register', async (req, res) => {
             const user = req.body;
             console.log(req.body, 'user')
 
